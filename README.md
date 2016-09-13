@@ -46,7 +46,7 @@ npm install --g gulp-cli
 Clone this repository via Terminal. Or just click on the download-button in the right corner...
 
 ```
-git clone https://github.com/koljakutschera/yet-another-frontend-build-process.git && cd yet-another-frontend-build-process
+git clone https://github.com/koljakutschera/yafbp && cd yafbp
 ```
 
 Install dependencies via Terminal(Maybe sudo is needed).
