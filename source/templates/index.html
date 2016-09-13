@@ -1,0 +1,23 @@
+---
+pagename: Home
+---
+
+{% extends "layouts/basic.html" %}
+
+{% block meta %}
+<title>{{ pagename }}</title>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="styles/home.css">
+{% endblock %}
+
+{% block body %}
+<h1>Updated at: {{ build.date }}</h1>
+{% include "partials/loremipsum.html" %}
+<img data-inject="svg" src="/images/coffee.svg" class="coffee" alt="I need coffee">
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="scripts/home.js"></script>
+{% endblock %}
