@@ -13,7 +13,7 @@
  * @param {module} module
  * @returns undefined
  */
-function requireUncached(module){
+module.exports = function requireUncached(module){
     delete require.cache[require.resolve(module)]
     return require(module)
 }
