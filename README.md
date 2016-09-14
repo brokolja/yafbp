@@ -12,9 +12,9 @@ Use it as it is or as a boilerplate or tutorial for your own build process.
 * No Sass because Less is more javascript.
 * No icon-fonts because inline-SVGs are scriptable/stylable.
 * No hassle with CORS in development.
-* No time to press Shift + Tab + R for reloading a Browser.
+* No time to for manually reloading a Browser.
 * No time to write all these browser-prefixes.
-* Optimizing images? Thats not my job.
+* No time for manually optimizing images.
 
 ## Features ##
 
