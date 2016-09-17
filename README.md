@@ -333,11 +333,12 @@ When the build process is started a file-watcher watches for file-changes and au
 Just look at the contents of the source/ directory.
 There are just a few example files that should be self-documenting.
 
+If you want a more advanced example checkout: [yafbp-example-blog](https://github.com/koljakutschera/yafbp-example-blog)
+
 To start from scratch -  You can delete everything in source/images/, source/scripts/, source/styles/, source/templates/ directories. In the data/ directory only /index.js is required.
 For scripts and styles remember that files on the root-level act as entry-points.
 
 Feel free to configure anything in /gulpfile.js to your needs.
-
 
 ## Contribution ##
 
