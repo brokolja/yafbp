@@ -1,0 +1,11 @@
+{
+  "global": {
+    "siteUrl": "http://www.change-to-your-domain.de"
+  },
+  "pages": {
+    "index": {
+      "title": "Home",
+      "path": "index.html"
+    }
+  }
+}

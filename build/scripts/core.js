@@ -1,0 +1,3 @@
+// Just an example
+console.log('tools/logs.js logging...');
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRvb2xzL2xvZy5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtBQUNBIiwiZmlsZSI6ImNvcmUuanMiLCJzb3VyY2VzQ29udGVudCI6WyIvLyBKdXN0IGFuIGV4YW1wbGVcbmNvbnNvbGUubG9nKCd0b29scy9sb2dzLmpzIGxvZ2dpbmcuLi4nKTsiXSwic291cmNlUm9vdCI6Ii9zb3VyY2UvIn0=

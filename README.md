@@ -1,33 +1,21 @@
-# Yet another frontend build process #
+# Yet another front-end build process #
 
-By the way - The hipster name of this project is: YAFBP
+Version: 1.0.0
 
-This front-end build process is more for old-school developers but uses the newest tools to get you up and running fast.
-Use it as it is or as a boilerplate or tutorial for your own build process.
+Impression:
 
-## Design decisions: ##
-
-* Templates should be readable like simple HTML but super powers are needed.
-* No non-standard javascript-Module-System.
-* No Sass because Less is more javascript.
-* No icon-fonts because inline-SVGs are scriptable/stylable.
-* No hassle with CORS in development.
-* No time to for manually reloading a Browser.
-* No time to write all these browser-prefixes.
-* No time for manually optimizing images.
+![Templating with data](source/images/screenshot.png)
 
 ## Features ##
 
-* Templating(Nunjucks)
-* Scripting(Javascript)
-* Styling(Less)
-* Inline-SVG injection(Iconic's SVGInjector)
-* Proxy(CORS Anywhere)
-* Autoreload(Livereload)
-* Autoprefixer(Less-autoprefix)
-* Image optimization(Imagemin)
-* Sourcemaps for styles and scripts
-
+* Templating (Layouts, blocks, includes, macros, more)
+* Template data layer (Access data in template or via ajax: global, per page, from all pages)
+* Modular less-stylesheets (Hot-reloading)(Autoprefixed)(Sourcemaps)
+* Modular javascript (Sourcemaps)
+* Auto image-optimization
+* Sitemap-generator
+* Autoreload
+* Proxy
 
 ## Installation ##
 
@@ -40,6 +28,7 @@ Install gulp-cli via Terminal.
 ```
 npm install --g gulp-cli
 ```
+
 
 ## Setup ##
 
@@ -55,9 +44,10 @@ Install dependencies via Terminal(Maybe sudo is needed).
 npm install
 ```
 
+
 ## Usage ##
 
-In the project directory start devserver with autoreload and watch for file-changes.
+In the project-directory start the process via Terminal:
 
 ```
 gulp
@@ -69,28 +59,61 @@ Or with minification for styles, scripts, images and html.
 gulp --production
 ```
 
-## Configuration ##
+## Development ##
 
-All the magic happens in /gulpfile.js. Feel free to configure/extend it to your needs.
+When the process is running open the following url in your browser:
+
+```
+http://localhost:8080
+```
+
 
 ## Templating ##
 
 In **source/templates** [Nunjucks](https://mozilla.github.io/nunjucks/templating.html "Nunjucks") is used for templating with all its features like block inheritance(layouts), autoescaping, macros and more.
-Every .html file on the root of the directory is compiled to the build/ directory. Templates on the root-level are your "pages".
-Files in sub-directories are ignored, but can be used in root-templates via Nunjucks [template-inheritance-system](https://mozilla.github.io/nunjucks/templating.html#template-inheritance "Nunjucks template-inheritance"). 
-The default directory structure is only a recommendation - feel free to delete everything and start from scratch.
+Every(except for files starting with an _) .html file on the root-level of the directory is compiled to the build/ directory. Templates on the root-level are your "pages".
+Files in sub-directories are ignored, but can be included in root-templates via Nunjucks [template-inheritance-system](https://mozilla.github.io/nunjucks/templating.html#template-inheritance "Nunjucks template-inheritance"). 
+The template data layer is covered in the next section.
 
-Example: Simple Nunjucks-Template
+> Info: The default directory structure is only a recommendation - feel free to delete everything and start from scratch.
+
+> Hint: Files starting with an _ will not compile. Use this for drafts etc.
+
+Example: Simple layout
+
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<title>{{ page.title }}</title>
+		{% block meta %}
+		{% endblock %}
+		<link rel="stylesheet" href="styles/core.css">
+		{% block styles %}
+		{% endblock %}
+	</head>
+	<body>
+		{% block body %}
+		{% endblock %}
+		<script type="text/javascript" src="scripts/core.js"></script>
+		{% block scripts %}
+		{% endblock %}
+	</body>
+</html> 
+```
+
+Example: Simple page
 
 ```html
 ---
-pagename: Home
+title: Home
 ---
 
 {% extends "layouts/basic.html" %}
 
 {% block meta %}
-<title>{{ pagename }}</title>
+<meta name="description" content="This is home.">
 {% endblock %}
 
 {% block styles %}
@@ -98,9 +121,8 @@ pagename: Home
 {% endblock %}
 
 {% block body %}
-<h1>Updated at: {{ build.date }}</h1>
-{% include "partials/loremipsum.html" %}
-<img data-inject="svg" data-src="/images/coffee.svg" class="coffee">
+<h1>Welcome to: {{ global.siteUrl }}</h1>
+<p>You are here: {{ page.title }}({{pages.index.path}})</p>
 {% endblock %}
 
 {% block scripts %}
@@ -108,140 +130,175 @@ pagename: Home
 {% endblock %}
 ```
 
+Result:
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>Home</title>
+        <meta name="description" content="This is home.">
+        <link rel="stylesheet" href="styles/core.css">
+        <link rel="stylesheet" href="styles/home.css">
+    </head>
+    <body>
+        <h1>Welcome to: http://www.change-to-your-domain.de</h1>
+        <p>You are here: Home(index.html)</p>
+        <script type="text/javascript" src="scripts/core.js"></script>
+        <script type="text/javascript" src="scripts/home.js"></script>
+    </body>
+</html> 
+```
+
 See [https://mozilla.github.io/nunjucks/](https://mozilla.github.io/nunjucks/) for more.
 
-### Templating with data ###
+## Template data layer ##
 
-In **data/index.js** you can export global data to use it in all your templates.
-This is how most static-page-generators work.
-Think about generating navigation from json or reading data from csv-files.
-You can import/require all the npm-modules or any other script via node's require.
-The default directory structure is only a recommendation - feel free to delete everything except for data/index.js and start from scratch.
+### Global data ###
 
-> Hint: There is a helper-function in data/tools/requireUncached.js to import node-modules uncached. Use this if you dont want node to cache your modules while watching files.
+In **data/index.js** you can define your own data-sets and export it to all your templates.
+Think about generating navigation from json or exposing data from a csv-files that is read via nodejs.
+Global data is accessible in templates via "global" variable.
+The data is also written to build/data.json for ajax-access.
 
-Example: Export build-date to templates.
+> Info: The default directory structure in data/ is only a recommendation - feel free to delete everything except for data/index.js and start from scratch.
+
+> Help: There is a helper-function in data/index.js to import node-modules un-cached. Use this if you always want fresh data on every file-change.
+
+> Hint: You can dump the data of all pages with: {{ page | dump }}
+
+Example: Export site-url to all templates.
 
 ```javascript
-// data/index.js
-module.exports = {
-    // The following example data is accessible in all templates.
-    build : {
-        date : new Date()
-    }
-}
+var global = {
+    siteUrl : 'http://www.change-to-yourdomain.de' // Required for sitemap.xml - do not delete!
+};
+
+// Expose data to templates
+module.exports = global;
 ```
 
-Example: Access build-date in templates:
+Example: Access site-url in page:
 
 ```html
-<h1>Updated at: {{ build.date }}</h1>
+<h1>Welcome to: {{ global.siteUrl }}</h1>
 ```
 
-### Templating with YAML-Front-Matter ###
+Result:
 
-Also you can provide data directly to a template via **YAML-Front-Matter** at the top of each template.
+```html
+<h1>Welcome to: http://www.change-to-yourdomain.de</h1>
+```
 
-> Hint: Data provided by YAML-Front-Matter overrides global data from data/index.js. Think about the possibilities.
 
+### Per page data ###
 
-Example: YAML-Front-Matter at the top of a template:
+You can also provide data directly to a page via **YAML-Front-Matter** at the top of root-templates.
+This data is accessible in the template via "page" variable.
+
+> Hint: You can dump the data of all pages with: {{ page | dump }} 
+
+Example: YAML-Front-Matter at the top of a page:
 
 ```
 ---
-pagename: Home
+title: Home
 ---
 ```
 
-
-Example: Access YAML-Front-Matter in template:
+Example: Access YAML-Front-Matter from page in layout template:
 
 ```html
-<title>{{ pagename }}</title>
+<title>{{ page.title }}</title>
+```
+
+Result:
+
+```html
+<title>Home</title>
 ```
 
 
-## Styling with Less ##
+### All pages data ###
 
-In **source/styles** every .less file on the root of the directory is compiled to the build/styles/ directory.
+All the data you have provided to all root-templates via YAML-Front-Matter is also accessible in all other templates via "pages"-variable.
+The data is also written to build/data.json for ajax-access.
+You can access data from another page by the name of the template without the .html extension.
+
+> Info: This gives you almost all possibilities you want from a static-page-generator.
+
+> Hint: You can dump the data of all pages with: {{ pages | dump }} 
+
+Example: Access data of another page in a page:
+
+```html
+<h1>Every little page knows the path of the index-page: {{ pages.index.path }}</h1>
+```
+
+Result:
+
+```html
+<h1>Every little page knows the title of the index-page: index.html</h1>
+```
+
+
+## Sitemap-generator ##
+
+For our SEOs all .html files on the root-level of **source/templates** are indexed to the sitemap.xml-file in the build/ directory. Files starting with an _ are excluded.
+
+
+## Modular less-stylesheets ##
+
+In **source/styles** every(except for files starting with an _) .less file on the root-level of the directory is compiled to the build/styles/ directory.
 Files in sub-directories are ignored, but can be imported in root-stylesheets via less-imports.
-The default directory structure is only a recommendation - feel free to delete everything and start from scratch.
 
 For example and depending on your needs you can use one core.less file and import all stylesheets in it for single-page-apps. Or you can use the core.less file for shared styles and multiple other files for per-page styles in a multi-page setup.
+
+> Hot: Styles are hot-reloaded(See file-changes without reloading the browser);
+
+> Info: The default directory structure is only a recommendation - feel free to delete everything and start from scratch.
 
 > Hint: You can also pass options to less-imports. [http://lesscss.org/](http://lesscss.org/features/#import-options "import-options")
 
 Example: Importing another stylesheet.
 
 ```less
-@import "mod1/dep1.less";
+@import "tools/reset.less";
 ```
 
 See [http://lesscss.org/](http://lesscss.org/) for more.
 
-## Scripting with Javascript ##
 
-In **source/scripts** every .js file on the root of the directory is compiled to the build/scripts/ directory.
+## CSS-Autoprefixer ##
+
+When writing less/css browser-prefixes are automatically added. You can configure browser-versions in /gulpfile.js
+
+
+## Modular javascript ##
+
+In **source/scripts** every(except for files starting with an _) .js-file on the root-level of the directory is compiled to the build/scripts/ directory.
 Files in sub-directories are ignored, but can be included in root-scripts via a special comment/directive.
-The default directory structure is only a recommendation - feel free to delete everything and start from scratch.
 
 Depending on your needs you can use one core.js file and require all libs and scripts in it for single-page-apps. Or you can use the core.js file for shared libraries and multiple other files for per-page scripts in a multi-page setup.
+
+> Info: The default directory structure is only a recommendation - feel free to delete everything and start from scratch.
 
 > Hint: Script including works recursively (files can include files that can include files, and so on)
 
 Example: Importing another script.
 
 ```javascript
-//=require mod1/dep1.js
+//=require tools/log.js
 ```
 
 See [https://www.npmjs.com/package/gulp-include](https://www.npmjs.com/package/gulp-include) for more.
 
-## Images ##
+## Auto image-optimization ##
 
 In **source/images** every .jpg, .png, .gif and .svg file is compiled/optimized to the build/images/ directory.
-The default directory structure is only a recommendation - feel free to delete everything and start from scratch.
 
-### SVG Images ###
-
-To unlock the full potential of SVG, including full element-level CSS styling and evaluation of embedded JavaScript,
- the full SVG markup must be included directly in the DOM. This is done by a fast, caching, dynamic inline-SVG DOM injection [library](https://github.com/iconic/SVGInjector "SVGInjector") that injects SVGs to img-tags as inline-code.
-
-To inject an SVG just use an img-tag with data-inject="svg" and src="/path/to/svg" attributes.
-
-> Hint: You can configure the SVG-injection in scripts/tools/injectSVGs.js
-
-Example: Injecting an SVG
-
-```html
-<img data-inject="svg" src="/images/coffee.svg" class="coffee" alt="I need coffee">
-```
-
-Because browsersupport for SVG starts with IE9 you can use data-fallback attribute to set a per-element PNG fallback for older Browsers.
-
-Example: Injecting an SVG with png-fallback:
-
-```html
-<img data-inject="svg" src="/images/coffee.svg" data-fallback="/images/coffee.png" class="coffee" alt="I need coffee">
-```
-
-If you want to animate/script an SVG via javascript you have to wait for the "all-SVGs-injected"-Event on document.
-
-Example: Log when all SVGs are injected.
-
-```javascript
-$(document).on('all-SVGs-injected', function (event) {
-    console.log('now you can animate/script the SVGs')
-});
-```
-
-If you got dynamic views rendered by javascript you have to call window.injectSVGs in your script after the view is rendered to inject new SVGs. Already rendered SVGs are cached.
-
-```javascript
-window.injectSVGs();
-```
-
-See [Inline SVG vs Icon Fonts](https://css-tricks.com/icon-fonts-vs-svg/) and [https://github.com/iconic/SVGInjector](https://github.com/iconic/SVGInjector) for more.
+> The default directory structure is only a recommendation - feel free to delete everything and start from scratch.
 
 
 ## Static Files ##
@@ -268,15 +325,11 @@ $.getJSON(proxy + endpoint, function( data ) {
 
 ## Autoreload ##
 
-When the build process is started a file-watcher watches for file-changes and autoreloads the browser on every change. Sometimes on first start you have to do a manual reload because the process is faster than the browser.
+When the build process is started a file-watcher watches for file-changes and autoreloads the browser every time you change a file. Sometimes on first start you have to do a manual reload because the process is faster than the browser.
 
-## Autoprefixer ##
-
-When writing less/css browser-prefixes are automaticaly added. You can configure Browserversions in /gulpfile.js
 
 ## Where do I start? ##
 
-This is just a starter with some basic example contents.
 Just look at the contents of the source/ directory.
 There are just a few example files that should be self-documenting.
 
@@ -285,14 +338,21 @@ For scripts and styles remember that files on the root-level act as entry-points
 
 Feel free to configure anything in /gulpfile.js to your needs.
 
+
 ## Contribution ##
 
-Please don't! Except for bugs. Iam not interested in extending this project with more crazy stuff. This is just a starter.
-If you want babel, react or your shiny whatever JS-Framework just fork this repo put it in and do it your self :P
+Please don't! Except for bugs. Iam not interested in extending this project with more crazy stuff to increase its complexity. 
+If you want babel, react or your shiny whatever JS-Framework just fork this repo and put it in the source directory :P
+
 
 ## Thank you ##
 
-Thank you to all funky developers listed in /package.json. Special thanks to Waybury for [SVGInjector](https://github.com/iconic/SVGInjector).
+Thank you to all funky developers listed in /package.json.
+
+
+## History ##
+
+* V1.0.0: Dropped SVGInjector for simplicity, Data-layer extended with global, page, pages variables, Added sitemap-generator, Simplify examples, Using _ in filenames for drafts, removed build/ from .gitignore
 
 ## Licence ##
 
