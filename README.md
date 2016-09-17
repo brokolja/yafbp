@@ -166,7 +166,7 @@ The data is also written to build/data.json for ajax-access.
 
 > Help: There is a helper-function in data/index.js to import node-modules un-cached. Use this if you always want fresh data on every file-change.
 
-> Hint: You can dump the data of all pages with: {{ page | dump }}
+> Hint: You can dump the global data with: {{ global | dump }}
 
 Example: Export site-url to all templates.
 
@@ -197,7 +197,7 @@ Result:
 You can also provide data directly to a page via **YAML-Front-Matter** at the top of root-templates.
 This data is accessible in the template via "page" variable.
 
-> Hint: You can dump the data of all pages with: {{ page | dump }} 
+> Hint: You can dump the data of a page with: {{ page | dump }} 
 
 Example: YAML-Front-Matter at the top of a page:
 
