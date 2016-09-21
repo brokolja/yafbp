@@ -1,6 +1,6 @@
 {
   "name": "yet-another-frontend-build-process",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This frontend build process is more for oldschool developers but uses the newest tools to get you up and running fast.",
   "author": {
     "name": "Kolja Kutschera",
@@ -14,6 +14,7 @@
     "process"
   ],
   "devDependencies": {
+    "accounting": "^0.4.1",
     "cors-anywhere": "^0.4.0",
     "del": "^2.2.2",
     "front-matter": "^2.1.0",
@@ -38,6 +39,9 @@
     "gulp-watch": "^4.3.5",
     "imagemin-pngquant": "^4.2.0",
     "less-plugin-autoprefix": "^1.5.1",
+    "lodash": "^4.16.1",
+    "moment": "^2.15.1",
+    "nunjucks": "^2.5.2",
     "underscore": "^1.8.3"
   }
 }

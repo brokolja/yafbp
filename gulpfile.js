@@ -6,7 +6,9 @@ var include = require("gulp-include");
 var rename = require("gulp-rename");
 var path = require('path');
 var watch = require('gulp-watch');
-var nunjucks = require('gulp-nunjucks');
+var gulpNunjucks = require('gulp-nunjucks');
+var nunjucks = require('nunjucks');
+var moment = require('moment');
 var imagemin = require('gulp-imagemin');
 var pngquant = require('imagemin-pngquant');
 var connect = require('gulp-connect');
@@ -25,32 +27,49 @@ var fm = require('front-matter');
 var _ = require('underscore');
 var fs = require('fs');
 var sitemap = require('gulp-sitemap');
+var accounting = require('accounting');
 
+// Configuration
 var config = {
 	production : !!util.env.production
 }
 
+// We will use our own nunjucks environment...
+var nunjucksEnv = new nunjucks.Environment(new nunjucks.FileSystemLoader('./source/templates/'), {})
+
+// ... because we want to add globals etc.
+nunjucksEnv.addGlobal('moment', moment);
+nunjucksEnv.addGlobal('accounting', accounting)
+
+// This is where the data for all pages gets indexed
 var dataPages = {};
 
+// Handle gulp errors
 function handleError (err) {
 
 	console.log(err);
 	this.emit('end');
 }
 
+// Require modules without caching them
 function requireUncached(module){
 	delete require.cache[require.resolve(module)]
 	return require(module)
 }
 
+// Are we in production or development?
 console.log('Production: ' + !!util.env.production);
 
+// GULP TASKS
+
+// Clean build directory
 gulp.task('clean', function () {
   return del.sync([
     './build/**/*',
   ]);
 });
 
+// Statics
 gulp.task('statics',function(){
 	gulp.src(['./source/statics/**/*'])
 	.pipe(cache('staticscache', {
@@ -63,6 +82,7 @@ gulp.task('statics',function(){
 	.pipe(connect.reload());
 });
 
+// Templates
 gulp.task('templates',function(){
 	gulp.src(['./source/templates/[^_]*.html'])
 	/*.pipe(cache('templatescache', { // does not work with dependend files
@@ -116,7 +136,9 @@ gulp.task('templates',function(){
 
 		return data;
     }))
-	.pipe(nunjucks.compile())
+	.pipe(gulpNunjucks.compile(null, {
+		env : nunjucksEnv
+	}))
 	.pipe(plumber({
 		handleError: handleError
 	}))
@@ -127,6 +149,7 @@ gulp.task('templates',function(){
 	.pipe(connect.reload());
 });
 
+// Sitemap
 gulp.task('sitemap', function () {
 	gulp.src(['./source/templates/[^_]*.html'], {
 		read: false
@@ -137,6 +160,7 @@ gulp.task('sitemap', function () {
 	.pipe(gulp.dest('./build/'));
 });
 
+// Styles
 gulp.task('styles',function(){
 	gulp.src(['./source/styles/[^_]*.{less,css}'])
 	/*.pipe(cache('stylescache', { // does not work with dependend files
@@ -158,6 +182,7 @@ gulp.task('styles',function(){
 	.pipe(connect.reload());
 });
 
+// Scripts
 gulp.task('scripts',function(){
 	gulp.src(['./source/scripts/[^_]*.js'])
 	/*.pipe(cache('scriptscache', { // does not work with dependend files
@@ -177,6 +202,7 @@ gulp.task('scripts',function(){
 	.pipe(connect.reload());
 });
 
+// Images
 gulp.task('images',function(){
 	gulp.src(['./source/images/**/*.{jpg,png,gif,svg}'])
 	.pipe(cache('imagescache', {
@@ -194,6 +220,7 @@ gulp.task('images',function(){
 	.pipe(connect.reload());
 });
 
+// Connect
 gulp.task('connect', function() {
 	
 	corsAnywhere.createServer({
@@ -211,16 +238,20 @@ gulp.task('connect', function() {
 	});
 });
 
+// Openuri
 gulp.task('openuri', function(){
 	gulp.src('./build/*',{
 		read: false
 	}).pipe(open({uri: 'http://localhost:8080'}));
 });
 
+// Default task
 gulp.task(
 	'default',
 	['clean','templates','styles','scripts','images','statics','connect','sitemap'],
 	function(){
+
+		// WATCHERS
 
 		watch(['source/templates/**/*.html','source/data/*.js'], function() {
 
@@ -252,6 +283,7 @@ gulp.task(
 			gulp.start('statics');
 		});
 
+		// Workaround for indexing all pages data on first run
 		setTimeout(function () {
 
 			console.log('Running templates again to index initial data.');

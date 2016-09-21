@@ -1,6 +1,6 @@
 # Yet another front-end build process #
 
-Version: 1.0.0
+Version: 1.0.1
 
 Impression:
 
@@ -10,6 +10,7 @@ Impression:
 
 * Templating (Layouts, blocks, includes, macros, more)
 * Template data layer (Access data in template or via ajax: global, per page, from all pages)
+* Template helpers(moment.js, accounting.js)
 * Modular less-stylesheets (Hot-reloading)(Autoprefixed)(Sourcemaps)
 * Modular javascript (Sourcemaps)
 * Auto image-optimization
@@ -73,7 +74,6 @@ http://localhost:8080
 In **source/templates** [Nunjucks](https://mozilla.github.io/nunjucks/templating.html "Nunjucks") is used for templating with all its features like block inheritance(layouts), autoescaping, macros and more.
 Every(except for files starting with an _) .html file on the root-level of the directory is compiled to the build/ directory. Templates on the root-level are your "pages".
 Files in sub-directories are ignored, but can be included in root-templates via Nunjucks [template-inheritance-system](https://mozilla.github.io/nunjucks/templating.html#template-inheritance "Nunjucks template-inheritance"). 
-The template data layer is covered in the next section.
 
 > Info: The default directory structure is only a recommendation - feel free to delete everything and start from scratch.
 
@@ -152,6 +152,41 @@ Result:
 ```
 
 See [https://mozilla.github.io/nunjucks/](https://mozilla.github.io/nunjucks/) for more.
+
+### Template helpers ###
+
+You can use the following included helpers in your nunjucks templates and macros:
+* [moment.js](http://momentjs.com/) - Parse, validate, manipulate, and display dates.
+* [accounting.js](http://openexchangerates.github.io/accounting.js/) - number, money and currency formatting
+
+> Hint: You can add your own helpers to the global data object covered in the next section.
+
+
+Example: Formating a date-string with moment.js 
+
+```html
+<span>{{moment("2017-09-20").locale('de').format('LL')}}</span>
+```
+
+Result: Showing formatted German date
+
+```html
+<span>20. September 2017</span>
+```
+
+
+Example: Formating money with accounting.js
+
+```html
+<span>{{ accounting.formatMoney(4999.99, "€", 2, ".", ",") }}</span>
+```
+
+Result: Showing formatted money
+
+```html
+<span>€4.999,99</span>
+```
+
 
 ## Template data layer ##
 
@@ -353,6 +388,7 @@ Thank you to all funky developers listed in /package.json.
 
 ## History ##
 
+* V1.0.1: Added Template helpers(moment.js, accounting.js). See readme.md
 * V1.0.0: Dropped SVGInjector for simplicity, Data-layer extended with global, page, pages variables, Added sitemap-generator, Simplify examples, Using _ in filenames for drafts, removed build/ from .gitignore
 
 ## Licence ##
