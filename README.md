@@ -388,6 +388,7 @@ Thank you to all funky developers listed in /package.json.
 
 ## History ##
 
+* V1.0.2: Global- and pages data objects are now nunjucks-globals so that they can be used in macros too. Cache optimized.
 * V1.0.1: Added Template helpers(moment.js, accounting.js). See readme.md
 * V1.0.0: Dropped SVGInjector for simplicity, Data-layer extended with global, page, pages variables, Added sitemap-generator, Simplify examples, Using _ in filenames for drafts, removed build/ from .gitignore
 

@@ -3,7 +3,6 @@ var util = require('gulp-util');
 var plumber = require('gulp-plumber');
 var less = require('gulp-less');
 var include = require("gulp-include");
-var rename = require("gulp-rename");
 var path = require('path');
 var watch = require('gulp-watch');
 var gulpNunjucks = require('gulp-nunjucks');
@@ -21,7 +20,6 @@ var open = require('gulp-open');
 var corsAnywhere = require('cors-anywhere');
 var LessPluginAutoPrefix = require('less-plugin-autoprefix');
 var autoprefix = new LessPluginAutoPrefix({browsers: ["> 1%","last 4 versions"]});
-var cache = require('gulp-cached');
 var data = require('gulp-data');
 var fm = require('front-matter');
 var _ = require('underscore');
@@ -35,7 +33,9 @@ var config = {
 }
 
 // We will use our own nunjucks environment...
-var nunjucksEnv = new nunjucks.Environment(new nunjucks.FileSystemLoader('./source/templates/'), {})
+var nunjucksEnv = nunjucks.configure('./source/templates', {
+	noCache : true,
+});
 
 // ... because we want to add globals etc.
 nunjucksEnv.addGlobal('moment', moment);
@@ -72,9 +72,6 @@ gulp.task('clean', function () {
 // Statics
 gulp.task('statics',function(){
 	gulp.src(['./source/statics/**/*'])
-	.pipe(cache('staticscache', {
-		optimizeMemory : true
-	}))
 	.pipe(plumber({
 		handleError: handleError
 	}))
@@ -85,23 +82,18 @@ gulp.task('statics',function(){
 // Templates
 gulp.task('templates',function(){
 	gulp.src(['./source/templates/[^_]*.html'])
-	/*.pipe(cache('templatescache', { // does not work with dependend files
-		optimizeMemory : true
-	}))*/
 	.pipe(plumber({
 		handleError: handleError
 	}))
 	.pipe(data(function(file) {
 
-		var data;
+		var data = {};
 		var fileName = file.relative;
 		var fileContent = fm(String(file.contents));
 		//file.contents = new Buffer(fileContent.body);
 
-		if (fileName.indexOf('.html') >= 0) {
-			fileName = fileName.slice(0, -5);
-		}
-
+		// delete page-obj from pages-data if template gets deleted/renamed
+		// todo: check performance
 		_.each(dataPages, function (value, key, list) {
 
 			try {
@@ -112,29 +104,43 @@ gulp.task('templates',function(){
 			}
 		});
 
-		dataPages[fileName] = fileContent.attributes;
-
-		dataPages[fileName].path = file.relative;
-
-		data = {
-			global : requireUncached('./source/data/index.js'),
-			pages : dataPages
+		// cut off .html from filename for pages-data obj
+		if (fileName.indexOf('.html') >= 0) {
+			fileName = fileName.slice(0, -5);
 		}
 
-		siteUrl = data.global.siteUrl;
+		// adding page-data to pages-data...
+		dataPages[fileName] = fileContent.attributes;
+		dataPages[fileName].path = file.relative;
 
+		// collecting data...
+		data.global = requireUncached('./source/data/index.js');
+		data.pages = dataPages;
+		data.page = fileContent.attributes;
+		data.page.path = file.relative;
+
+		// siteUrl is used by sitemap-generator
+		siteUrl = data.global.siteUrl;
+		// global- and pages data added to nunjucks-environment = accessible in macros too
+		nunjucksEnv.addGlobal('global', data.global);
+		nunjucksEnv.addGlobal('pages', data.pages)
+
+		// write global and pages to json-file for ajax access
+		// todo: check performance
 		try {
-			fs.writeFileSync('./build/data.json', JSON.stringify(data, null, 2) , 'utf-8');
+			fs.writeFileSync('./build/data.json', JSON.stringify({
+				global : data.global,
+				pages : data.pages
+			}, null, 2) , 'utf-8');
 		} catch(err) {
-			
+
 			console.log('./build/data.json not writable')
 		}
 
-		data.page = fileContent.attributes;
-
-		data.path = file.relative;
-
-		return data;
+		// only page-data is directly returned to template
+		return {
+			page : data.page
+		};
     }))
 	.pipe(gulpNunjucks.compile(null, {
 		env : nunjucksEnv
@@ -163,9 +169,6 @@ gulp.task('sitemap', function () {
 // Styles
 gulp.task('styles',function(){
 	gulp.src(['./source/styles/[^_]*.{less,css}'])
-	/*.pipe(cache('stylescache', { // does not work with dependend files
-		//optimizeMemory : true
-	}))*/
 	.pipe(plumber({
 		handleError: handleError
 	}))
@@ -185,9 +188,6 @@ gulp.task('styles',function(){
 // Scripts
 gulp.task('scripts',function(){
 	gulp.src(['./source/scripts/[^_]*.js'])
-	/*.pipe(cache('scriptscache', { // does not work with dependend files
-		optimizeMemory : true
-	}))*/
 	.pipe(plumber({
 		handleError: handleError
 	}))
@@ -205,9 +205,6 @@ gulp.task('scripts',function(){
 // Images
 gulp.task('images',function(){
 	gulp.src(['./source/images/**/*.{jpg,png,gif,svg}'])
-	.pipe(cache('imagescache', {
-		optimizeMemory : true
-	}))
 	.pipe(plumber({
 		handleError: handleError
 	}))
@@ -224,7 +221,7 @@ gulp.task('images',function(){
 gulp.task('connect', function() {
 	
 	corsAnywhere.createServer({
-		originWhitelist: [], // Allow all origins 
+		originWhitelist: [],
 		httpProxyOptions : {
 			//auth : 'test:test'
 		}
@@ -234,7 +231,8 @@ gulp.task('connect', function() {
 	
 	connect.server({
 		root: './build',
-		livereload: true
+		livereload: true,
+		port: 8080
 	});
 });
 

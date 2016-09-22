@@ -1,7 +1,7 @@
 {
   "name": "yet-another-frontend-build-process",
-  "version": "1.0.1",
-  "description": "This frontend build process is more for oldschool developers but uses the newest tools to get you up and running fast.",
+  "version": "1.0.2",
+  "description": "yet-another-frontend-build-process.",
   "author": {
     "name": "Kolja Kutschera",
     "url": "koljakutschera.de"
@@ -19,8 +19,6 @@
     "del": "^2.2.2",
     "front-matter": "^2.1.0",
     "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^3.1.0",
-    "gulp-cached": "^1.1.0",
     "gulp-connect": "^2.3.1",
     "gulp-cssnano": "^2.1.0",
     "gulp-data": "^1.2.1",
@@ -31,7 +29,6 @@
     "gulp-nunjucks": "^2.2.0",
     "gulp-open": "^1.0.0",
     "gulp-plumber": "^1.0.0",
-    "gulp-rename": "^1.2.2",
     "gulp-sitemap": "^4.2.0",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^1.5.1",
