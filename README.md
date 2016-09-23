@@ -1,6 +1,6 @@
 # Yet another front-end build process #
 
-Version: 1.1.0
+Version: 1.2.0
 
 Impression:
 
@@ -18,6 +18,7 @@ Impression:
 * Autoreload
 * Tunnel(expose localhost to public URL)
 * Proxy
+* PageSpeed Insights reporting
 
 
 ## Installation ##
@@ -56,16 +57,22 @@ In the project-directory start the development process via Terminal:
 gulp
 ```
 
+Or with minification for styles, scripts, images and html.
+
+```
+gulp --production
+```
+
 Or with exposing localhost to public URL(See public development covered in the next section)
 
 ```
 gulp --tunnel
 ```
 
-Or with minification for styles, scripts, images and html.
+Or with [PageSpeed-Insights](https://developers.google.com/speed/pagespeed/insights/) reports for all pages(could take a few minutes...)
 
 ```
-gulp --production
+gulp --production --tunnel --psi
 ```
 
 ## Development ##
@@ -410,6 +417,7 @@ Thank you to all funky developers listed in /package.json.
 
 ## History ##
 
+* V1.2.0: Added PageSpeed Insights reporting feature. See readme.md -> Usage
 * V1.1.0: Added Tunnel(expose localhost to public URL) feature. See readme.md
 * V1.0.2: Global- and pages data objects are now nunjucks-globals so that they can be used in macros too. Cache optimized.
 * V1.0.1: Added Template helpers(moment.js, accounting.js). See readme.md

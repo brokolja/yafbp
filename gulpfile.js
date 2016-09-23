@@ -27,11 +27,13 @@ var fs = require('fs');
 var sitemap = require('gulp-sitemap');
 var accounting = require('accounting');
 var ngrok = require('ngrok');
+var psi = require('psi');
 
 // Configuration
 var config = {
 	production : !!util.env.production,
-	tunnel : !!util.env.tunnel
+	tunnel : !!util.env.tunnel,
+	psi : !!util.env.psi
 }
 
 // We will use our own nunjucks environment...
@@ -256,7 +258,27 @@ gulp.task('tunnel', function(cb) {
 	}, function (err, url) {
 		site = url;
 		console.log('Exposing localhost:8080 via public URL: ' + site);
+
 		cb();
+
+		if(config.psi){
+
+			_.each(dataPages, function (value, key, list) {
+
+				console.log('Awaiting psi-report for: ' + url + '/' + key +'.html');
+
+				psi.output(url + '/' + key +'.html',{
+					nokey: 'true', // or use key: ‘YOUR_API_KEY’
+					strategy: 'desktop',
+				}).then(() => {
+					
+					psi.output(url + '/' + key +'.html',{
+						nokey: 'true', // or use key: ‘YOUR_API_KEY’
+						strategy: 'mobile',
+					});
+				});
+			});
+		}
   });
 });
 
