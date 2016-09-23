@@ -26,10 +26,12 @@ var _ = require('underscore');
 var fs = require('fs');
 var sitemap = require('gulp-sitemap');
 var accounting = require('accounting');
+var ngrok = require('ngrok');
 
 // Configuration
 var config = {
-	production : !!util.env.production
+	production : !!util.env.production,
+	tunnel : !!util.env.tunnel
 }
 
 // We will use our own nunjucks environment...
@@ -243,6 +245,21 @@ gulp.task('openuri', function(){
 	}).pipe(open({uri: 'http://localhost:8080'}));
 });
 
+gulp.task('tunnel', function(cb) {
+	return ngrok.connect({
+		proto: 'http', // http|tcp|tls 
+		addr: 8080, // port or network address 
+		//auth: 'yafbp:yafbp', // http basic authentication for tunnel 
+		//subdomain: 'alex', // reserved tunnel name https://alex.ngrok.io 
+		//authtoken: '12345', // your authtoken from ngrok.com 
+		region: 'eu' // one of ngrok regions (us, eu, au, ap), defaults to us 
+	}, function (err, url) {
+		site = url;
+		console.log('Exposing localhost:8080 via public URL: ' + site);
+		cb();
+  });
+});
+
 // Default task
 gulp.task(
 	'default',
@@ -291,6 +308,11 @@ gulp.task(
 			setTimeout(function () {
 
 				gulp.start('openuri');
+
+				if(config.tunnel){
+
+					gulp.start('tunnel');
+				}
 			}, 1000);
 		}, 1000);
 	}

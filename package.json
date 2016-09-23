@@ -1,6 +1,6 @@
 {
   "name": "yet-another-frontend-build-process",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "yet-another-frontend-build-process.",
   "author": {
     "name": "Kolja Kutschera",
@@ -38,6 +38,7 @@
     "less-plugin-autoprefix": "^1.5.1",
     "lodash": "^4.16.1",
     "moment": "^2.15.1",
+    "ngrok": "^2.2.3",
     "nunjucks": "^2.5.2",
     "underscore": "^1.8.3"
   }

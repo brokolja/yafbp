@@ -16,7 +16,9 @@ Impression:
 * Auto image-optimization
 * Sitemap-generator
 * Autoreload
+* Tunnel(expose localhost to public URL)
 * Proxy
+
 
 ## Installation ##
 
@@ -48,10 +50,16 @@ npm install
 
 ## Usage ##
 
-In the project-directory start the process via Terminal:
+In the project-directory start the development process via Terminal:
 
 ```
 gulp
+```
+
+Or with exposing localhost to public URL(See public development covered in the next section)
+
+```
+gulp --tunnel
 ```
 
 Or with minification for styles, scripts, images and html.
@@ -62,10 +70,24 @@ gulp --production
 
 ## Development ##
 
+### Local development ###
+
 When the process is running open the following url in your browser:
 
 ```
 http://localhost:8080
+```
+
+### Public development ###
+
+When using --tunnel flag you can also access your project via temporary public URL.
+With this you can for example check your site with [browserstack](https://www.browserstack.com/) or send the link to your customer for live-testing.
+
+> Hint: On every process start you get a new temporary public URL. You can see it in terminal logs.
+
+Example: See terminal logs for public URL
+```
+Exposing localhost:8080 via public URL: https://temorary123.eu.ngrok.io
 ```
 
 
@@ -388,6 +410,7 @@ Thank you to all funky developers listed in /package.json.
 
 ## History ##
 
+* V1.1.0: Added Tunnel(expose localhost to public URL) feature. See readme.md
 * V1.0.2: Global- and pages data objects are now nunjucks-globals so that they can be used in macros too. Cache optimized.
 * V1.0.1: Added Template helpers(moment.js, accounting.js). See readme.md
 * V1.0.0: Dropped SVGInjector for simplicity, Data-layer extended with global, page, pages variables, Added sitemap-generator, Simplify examples, Using _ in filenames for drafts, removed build/ from .gitignore
