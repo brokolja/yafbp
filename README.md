@@ -442,6 +442,7 @@ Thank you to all funky developers listed in /package.json.
 
 ## History ##
 
+* V1.2.1: Configuration added. See readme.md -> Configuration
 * V1.2.0: Added PageSpeed Insights reporting feature. See readme.md -> Usage
 * V1.1.0: Added Tunnel(expose localhost to public URL) feature. See readme.md
 * V1.0.2: Global- and pages data objects are now nunjucks-globals so that they can be used in macros too. Cache optimized.
