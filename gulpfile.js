@@ -19,8 +19,7 @@ var del = require('del');
 var open = require('gulp-open');
 var corsAnywhere = require('cors-anywhere');
 var LessPluginAutoPrefix = require('less-plugin-autoprefix');
-var autoprefix = new LessPluginAutoPrefix({browsers: ["> 1%","last 4 versions"]});
-var data = require('gulp-data');
+var gulpData = require('gulp-data');
 var fm = require('front-matter');
 var _ = require('underscore');
 var fs = require('fs');
@@ -29,15 +28,31 @@ var accounting = require('accounting');
 var ngrok = require('ngrok');
 var psi = require('psi');
 
-// Configuration
+// Configuration - Change to your needs...
 var config = {
-	production : !!util.env.production,
-	tunnel : !!util.env.tunnel,
-	psi : !!util.env.psi
+	source_dir : './source/',
+	build_dir : './build/',
+	statics_dir : 'statics/',
+	templates_dir : 'templates/',
+	data_dir : 'data/',
+	styles_dir : 'styles/',
+	scripts_dir : 'scripts/',
+	images_dir : 'images/',
+	connect_port : 8080,
+	proxy_port : 9090,
+	proxyAuth : '', // 'user:passw'
+	autoprefix : ["> 1%","last 4 versions"], // https://github.com/ai/browserslist#queries
 }
 
+config.production = !!util.env.production; // do not change!
+config.tunnel = !!util.env.tunnel; // do not change!
+config.psi = !!util.env.psi; // do not change!
+
+// Configure autoprefixing
+var autoprefix = new LessPluginAutoPrefix({browsers: config.autoprefix});
+
 // We will use our own nunjucks environment...
-var nunjucksEnv = nunjucks.configure('./source/templates', {
+var nunjucksEnv = nunjucks.configure(config.source_dir + config.templates_dir, {
 	noCache : true,
 });
 
@@ -69,27 +84,27 @@ console.log('Production: ' + !!util.env.production);
 // Clean build directory
 gulp.task('clean', function () {
   return del.sync([
-    './build/**/*',
+    config.build_dir + '**/*',
   ]);
 });
 
 // Statics
 gulp.task('statics',function(){
-	gulp.src(['./source/statics/**/*'])
+	gulp.src([config.source_dir + config.statics_dir + '**/*'])
 	.pipe(plumber({
 		handleError: handleError
 	}))
-	.pipe(gulp.dest('./build/statics/'))
+	.pipe(gulp.dest(config.build_dir + config.statics_dir))
 	.pipe(connect.reload());
 });
 
 // Templates
 gulp.task('templates',function(){
-	gulp.src(['./source/templates/[^_]*.html'])
+	gulp.src([config.source_dir + config.templates_dir + '[^_]*.html'])
 	.pipe(plumber({
 		handleError: handleError
 	}))
-	.pipe(data(function(file) {
+	.pipe(gulpData(function(file) {
 
 		var data = {};
 		var fileName = file.relative;
@@ -101,7 +116,7 @@ gulp.task('templates',function(){
 		_.each(dataPages, function (value, key, list) {
 
 			try {
-				fs.statSync('./source/templates/' + key +'.html');
+				fs.statSync(config.source_dir + config.templates_dir + key +'.html');
 			} catch(err) {
 				
 				delete dataPages[key];
@@ -118,7 +133,7 @@ gulp.task('templates',function(){
 		dataPages[fileName].path = file.relative;
 
 		// collecting data...
-		data.global = requireUncached('./source/data/index.js');
+		data.global = requireUncached(config.source_dir + config.data_dir + 'index.js');
 		data.pages = dataPages;
 		data.page = fileContent.attributes;
 		data.page.path = file.relative;
@@ -132,13 +147,13 @@ gulp.task('templates',function(){
 		// write global and pages to json-file for ajax access
 		// todo: check performance
 		try {
-			fs.writeFileSync('./build/data.json', JSON.stringify({
+			fs.writeFileSync(config.build_dir + 'data.json', JSON.stringify({
 				global : data.global,
 				pages : data.pages
 			}, null, 2) , 'utf-8');
 		} catch(err) {
 
-			console.log('./build/data.json not writable')
+			console.log(config.build_dir + 'data.json not writable')
 		}
 
 		// only page-data is directly returned to template
@@ -155,24 +170,24 @@ gulp.task('templates',function(){
 	.pipe(config.production ? htmlmin({
 		collapseWhitespace: true
 	}) : util.noop())
-	.pipe(gulp.dest('./build/'))
+	.pipe(gulp.dest(config.build_dir))
 	.pipe(connect.reload());
 });
 
 // Sitemap
 gulp.task('sitemap', function () {
-	gulp.src(['./source/templates/[^_]*.html'], {
+	gulp.src([config.source_dir + config.templates_dir + '[^_]*.html'], {
 		read: false
 	})
 	.pipe(sitemap({
-		siteUrl: require('./source/data/index.js').siteUrl
+		siteUrl: require(config.source_dir + config.data_dir + 'index.js').siteUrl
 	}))
-	.pipe(gulp.dest('./build/'));
+	.pipe(gulp.dest(config.build_dir));
 });
 
 // Styles
 gulp.task('styles',function(){
-	gulp.src(['./source/styles/[^_]*.{less,css}'])
+	gulp.src([config.source_dir + config.styles_dir + '[^_]*.{less,css}'])
 	.pipe(plumber({
 		handleError: handleError
 	}))
@@ -185,13 +200,13 @@ gulp.task('styles',function(){
 		handleError: handleError
 	}))
 	.pipe(config.production ? cssnano() : util.noop())
-	.pipe(gulp.dest('./build/styles/'))
+	.pipe(gulp.dest(config.build_dir + config.styles_dir))
 	.pipe(connect.reload());
 });
 
 // Scripts
 gulp.task('scripts',function(){
-	gulp.src(['./source/scripts/[^_]*.js'])
+	gulp.src([config.source_dir + config.scripts_dir + '[^_]*.js'])
 	.pipe(plumber({
 		handleError: handleError
 	}))
@@ -202,13 +217,13 @@ gulp.task('scripts',function(){
 		handleError: handleError
 	}))
 	.pipe(config.production ? uglify() : util.noop())
-	.pipe(gulp.dest('./build/scripts/'))
+	.pipe(gulp.dest(config.build_dir + config.scripts_dir))
 	.pipe(connect.reload());
 });
 
 // Images
 gulp.task('images',function(){
-	gulp.src(['./source/images/**/*.{jpg,png,gif,svg}'])
+	gulp.src([config.source_dir + config.images_dir + '**/*.{jpg,png,gif,svg}'])
 	.pipe(plumber({
 		handleError: handleError
 	}))
@@ -217,47 +232,52 @@ gulp.task('images',function(){
 		svgoPlugins: [{removeViewBox: false}],
 		use: [pngquant()]
 	}) : util.noop())
-	.pipe(gulp.dest('./build/images/'))
+	.pipe(gulp.dest(config.build_dir + config.images_dir))
 	.pipe(connect.reload());
 });
 
 // Connect
 gulp.task('connect', function() {
+
+	var httpProxyOptions = {};
+
+	if(config.proxyAuth && config.proxyAuth.length > 0){
+
+		httpProxyOptions.auth = config.proxyAuth;
+	}
 	
 	corsAnywhere.createServer({
 		originWhitelist: [],
-		httpProxyOptions : {
-			//auth : 'test:test'
-		}
-	}).listen((process.env.PORT || 9090), 'localhost', function() {
-		console.log('Running CORS Anywhere on ' + 'localhost' + ':' + (process.env.PORT || 9090));
+		httpProxyOptions : httpProxyOptions
+	}).listen(config.proxy_port, 'localhost', function() {
+		console.log('Running CORS Anywhere on ' + 'localhost' + ':' + config.proxy_port);
 	});
 	
 	connect.server({
-		root: './build',
+		root: config.build_dir,
 		livereload: true,
-		port: 8080
+		port: config.connect_port
 	});
 });
 
 // Openuri
 gulp.task('openuri', function(){
-	gulp.src('./build/*',{
+	gulp.src(config.build_dir + '*',{
 		read: false
-	}).pipe(open({uri: 'http://localhost:8080'}));
+	}).pipe(open({uri: 'http://localhost:' + config.connect_port}));
 });
 
 gulp.task('tunnel', function(cb) {
 	return ngrok.connect({
 		proto: 'http', // http|tcp|tls 
-		addr: 8080, // port or network address 
+		addr: config.connect_port, // port or network address 
 		//auth: 'yafbp:yafbp', // http basic authentication for tunnel 
 		//subdomain: 'alex', // reserved tunnel name https://alex.ngrok.io 
 		//authtoken: '12345', // your authtoken from ngrok.com 
-		region: 'eu' // one of ngrok regions (us, eu, au, ap), defaults to us 
+		//region: 'eu' // one of ngrok regions (us, eu, au, ap), defaults to us 
 	}, function (err, url) {
 		site = url;
-		console.log('Exposing localhost:8080 via public URL: ' + site);
+		console.log('Exposing localhost:'+ config.connect_port +' via public URL: ' + site);
 
 		cb();
 
@@ -290,37 +310,37 @@ gulp.task(
 
 		// WATCHERS
 
-		watch(['source/templates/**/*.html','source/data/*.js'], function() {
+		watch([config.source_dir + config.templates_dir + '**/*.html', config.source_dir + config.data_dir + '*.{js,json}'], function() {
 
 			gulp.start('templates');
 		});
 
-		watch(['source/templates/**/*.html'], function() {
+		watch([config.source_dir + config.templates_dir + '**/*.html'], function() {
 
 			gulp.start('sitemap');
 		});
 		
-		watch('source/styles/**/*.less', function() {
+		watch(config.source_dir + config.styles_dir + '**/*.{less,css}', function() {
 
 			gulp.start('styles');
 		});
 		
-		watch('source/scripts/**/*.js', function() {
+		watch(config.source_dir + config.scripts_dir + '**/*.js', function() {
 
 			gulp.start('scripts');
 		});
 		
-		watch('source/images/**/*.{jpg,png,gif,svg}', function() {
+		watch(config.source_dir + config.images_dir + '**/*.{jpg,png,gif,svg}', function() {
 
 			gulp.start('images');
 		});
 		
-		watch('source/statics/**/*', function() {
+		watch(config.source_dir + config.statics_dir + '**/*', function() {
 
 			gulp.start('statics');
 		});
 
-		// Workaround for indexing all pages data on first run
+		// Workaround for indexing all pages data on first run(only)
 		setTimeout(function () {
 
 			console.log('Running templates again to index initial data.');

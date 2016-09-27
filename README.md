@@ -1,6 +1,6 @@
 # Yet another front-end build process #
 
-Version: 1.2.0
+Version: 1.2.1
 
 Impression:
 
@@ -49,6 +49,30 @@ npm install
 ```
 
 
+## Configuration ##
+
+You can configure the process-settings in /gulpfile.js:
+
+Example: Default configuration
+
+```javascript
+var config = {
+	source_dir : './source/',
+	build_dir : './build/',
+	statics_dir : 'statics/',
+	templates_dir : 'templates/',
+	data_dir : 'data/',
+	styles_dir : 'styles/',
+	scripts_dir : 'scripts/',
+	images_dir : 'images/',
+	connect_port : 8080,
+	proxy_port : 9090,
+	proxyAuth : '',
+	autoprefix : ["> 1%","last 4 versions"]
+}
+```
+
+
 ## Usage ##
 
 In the project-directory start the development process via Terminal:
@@ -74,6 +98,7 @@ Or with [PageSpeed-Insights](https://developers.google.com/speed/pagespeed/insig
 ```
 gulp --production --tunnel --psi
 ```
+
 
 ## Development ##
 
@@ -387,9 +412,9 @@ $.getJSON(proxy + endpoint, function( data ) {
 });
 ```
 
-## Autoreload ##
+## Auto-reload ##
 
-When the build process is started a file-watcher watches for file-changes and autoreloads the browser every time you change a file. Sometimes on first start you have to do a manual reload because the process is faster than the browser.
+When the build process is started a file-watcher watches for file-changes and auto-reloads the browser every time you change a file. Sometimes on first start you have to do a manual reload because the process is faster than the browser.
 
 
 ## Where do I start? ##
@@ -422,6 +447,7 @@ Thank you to all funky developers listed in /package.json.
 * V1.0.2: Global- and pages data objects are now nunjucks-globals so that they can be used in macros too. Cache optimized.
 * V1.0.1: Added Template helpers(moment.js, accounting.js). See readme.md
 * V1.0.0: Dropped SVGInjector for simplicity, Data-layer extended with global, page, pages variables, Added sitemap-generator, Simplify examples, Using _ in filenames for drafts, removed build/ from .gitignore
+
 
 ## Licence ##
 
