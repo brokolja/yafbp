@@ -2,6 +2,8 @@
 
 Version: 1.2.1
 
+Simple but powerful static site generator, starter or boilerplate.
+
 Impression:
 
 ![Templating with data](source/images/screenshot.png)
