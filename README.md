@@ -452,6 +452,14 @@ Thank you to all funky developers listed in /package.json.
 * V1.0.0: Dropped SVGInjector for simplicity, Data-layer extended with global, page, pages variables, Added sitemap-generator, Simplify examples, Using _ in filenames for drafts, removed build/ from .gitignore
 
 
+## Troubleshooting ##
+
+Linux: The system has a limit to how many files can be watched by a user. The following command increases the maximum amount of watches a user can have:
+
+```
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+```
+
 ## Licence ##
 
 The MIT License (MIT)
