@@ -309,7 +309,6 @@ gulp.task(
 	function(){
 
 		// WATCHERS
-
 		watch([config.source_dir + config.templates_dir + '**/*.html', config.source_dir + config.data_dir + '*.{js,json}'], {
 			read: false,
 			readDelay: 100

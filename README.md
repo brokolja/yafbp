@@ -310,7 +310,6 @@ Result:
 <title>Home</title>
 ```
 
-
 ### All pages data ###
 
 All the data you have provided to all root-templates via YAML-Front-Matter is also accessible in all other templates via "pages"-variable.

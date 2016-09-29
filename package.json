@@ -11,7 +11,8 @@
   "keywords": [
     "frontend",
     "build",
-    "process"
+    "process",
+    "yafbp"
   ],
   "devDependencies": {
     "accounting": "^0.4.1",
