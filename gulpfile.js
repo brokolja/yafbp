@@ -310,32 +310,50 @@ gulp.task(
 
 		// WATCHERS
 
-		watch([config.source_dir + config.templates_dir + '**/*.html', config.source_dir + config.data_dir + '*.{js,json}'], function() {
+		watch([config.source_dir + config.templates_dir + '**/*.html', config.source_dir + config.data_dir + '*.{js,json}'], {
+			read: false,
+			readDelay: 100
+		}, function() {
 
 			gulp.start('templates');
 		});
 
-		watch([config.source_dir + config.templates_dir + '**/*.html'], function() {
+		watch([config.source_dir + config.templates_dir + '**/*.html'], {
+			read: false,
+			readDelay: 100
+		}, function() {
 
 			gulp.start('sitemap');
 		});
 		
-		watch(config.source_dir + config.styles_dir + '**/*.{less,css}', function() {
+		watch(config.source_dir + config.styles_dir + '**/*.{less,css}', {
+			read: false,
+			readDelay: 100
+		}, function() {
 
 			gulp.start('styles');
 		});
 		
-		watch(config.source_dir + config.scripts_dir + '**/*.js', function() {
+		watch(config.source_dir + config.scripts_dir + '**/*.js', {
+			read: false,
+			readDelay: 100
+		}, function() {
 
 			gulp.start('scripts');
 		});
 		
-		watch(config.source_dir + config.images_dir + '**/*.{jpg,png,gif,svg}', function() {
+		watch(config.source_dir + config.images_dir + '**/*.{jpg,png,gif,svg}',	{
+			read: false,
+			readDelay: 100
+		}, function() {
 
 			gulp.start('images');
 		});
 		
-		watch(config.source_dir + config.statics_dir + '**/*', function() {
+		watch(config.source_dir + config.statics_dir + '**/*', {
+			read: false,
+			readDelay: 100
+		}, function() {
 
 			gulp.start('statics');
 		});

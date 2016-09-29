@@ -1,6 +1,6 @@
 # Yet another front-end build process #
 
-Version: 1.2.1
+Version: 1.2.2
 
 Simple but powerful static site generator, starter or boilerplate.
 
@@ -444,6 +444,7 @@ Thank you to all funky developers listed in /package.json.
 
 ## History ##
 
+* V1.2.2: Optimized watchers for slow file-systems
 * V1.2.1: Configuration added. See readme.md -> Configuration
 * V1.2.0: Added PageSpeed Insights reporting feature. See readme.md -> Usage
 * V1.1.0: Added Tunnel(expose localhost to public URL) feature. See readme.md
