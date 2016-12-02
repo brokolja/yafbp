@@ -1,6 +1,6 @@
 # Yet another front-end build process #
 
-Version: 1.2.2
+Version: 1.2.3
 
 Simple but powerful static site generator, starter or boilerplate.
 
