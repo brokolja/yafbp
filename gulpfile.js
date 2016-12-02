@@ -27,6 +27,7 @@ var sitemap = require('gulp-sitemap');
 var accounting = require('accounting');
 var ngrok = require('ngrok');
 var psi = require('psi');
+var purify = require('gulp-purifycss');
 
 // Configuration - Change to your needs...
 var config = {
@@ -47,6 +48,7 @@ var config = {
 config.production = !!util.env.production; // do not change!
 config.tunnel = !!util.env.tunnel; // do not change!
 config.psi = !!util.env.psi; // do not change!
+config.purify = !!util.env.purify; // do not change!
 
 // Configure autoprefixing
 var autoprefix = new LessPluginAutoPrefix({browsers: config.autoprefix});
@@ -199,6 +201,7 @@ gulp.task('styles',function(){
 	.pipe(plumber({
 		handleError: handleError
 	}))
+	.pipe(config.purify ? purify([config.source_dir + config.scripts_dir + '[^_]*.js', config.source_dir + config.templates_dir + '[^_]*.html']) : util.noop())	
 	.pipe(config.production ? cssnano() : util.noop())
 	.pipe(gulp.dest(config.build_dir + config.styles_dir))
 	.pipe(connect.reload());

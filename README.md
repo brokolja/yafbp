@@ -21,6 +21,7 @@ Impression:
 * Tunnel(expose localhost to public URL)
 * Proxy
 * PageSpeed Insights reporting
+* Remove unused CSS
 
 
 ## Installation ##
@@ -79,6 +80,8 @@ var config = {
 
 In the project-directory start the development process via Terminal:
 
+> Hint: All commands starting with -- can be combined.
+
 ```
 gulp
 ```
@@ -87,6 +90,12 @@ Or with minification for styles, scripts, images and html.
 
 ```
 gulp --production
+```
+
+Or with removing all unused styles.
+
+```
+gulp --purify 
 ```
 
 Or with exposing localhost to public URL(See public development covered in the next section)
@@ -443,6 +452,7 @@ Thank you to all funky developers listed in /package.json.
 
 ## History ##
 
+* V1.2.3: Remove unused CSS with --purify command. See readme -> Usage
 * V1.2.2: Optimized watchers for slow file-systems
 * V1.2.1: Configuration added. See readme.md -> Configuration
 * V1.2.0: Added PageSpeed Insights reporting feature. See readme.md -> Usage

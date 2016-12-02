@@ -30,6 +30,7 @@
     "gulp-nunjucks": "^2.2.0",
     "gulp-open": "^1.0.0",
     "gulp-plumber": "^1.0.0",
+    "gulp-purifycss": "^0.2.0",
     "gulp-sitemap": "^4.2.0",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^1.5.1",
