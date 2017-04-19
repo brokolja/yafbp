@@ -1,0 +1,1 @@
+{"version":3,"sources":["home.less","../../<input css 2>"],"names":[],"mappings":"AACA;EACI,gBAAA;EACA,YAAA;CCAH","file":"home.css","sourcesContent":["// Just an example...\nh1 {\n    font-size: 32px;\n    color: #222;\n}","h1 {\n  font-size: 32px;\n  color: #222;\n}\n"]}

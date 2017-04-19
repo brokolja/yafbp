@@ -1,6 +1,6 @@
 # Yet another front-end build process #
 
-Version: 1.2.3
+Version: 1.2.4
 
 Simple but powerful static site generator, starter or boilerplate.
 
@@ -452,6 +452,7 @@ Thank you to all funky developers listed in /package.json.
 
 ## History ##
 
+* V1.2.4: Write external source map files
 * V1.2.3: Remove unused CSS with --purify command. See readme -> Usage
 * V1.2.2: Optimized watchers for slow file-systems
 * V1.2.1: Configuration added. See readme.md -> Configuration

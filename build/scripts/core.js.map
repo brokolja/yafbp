@@ -1,0 +1,1 @@
+{"version":3,"sources":["tools/log.js"],"names":[],"mappings":"AAAA;AACA","file":"core.js","sourcesContent":["// Just an example\nconsole.log('tools/logs.js logging...');"]}

@@ -1,3 +1,3 @@
 // Just an example
 console.log('home.js logging...');
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiIiwic291cmNlcyI6WyJob21lLmpzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIEp1c3QgYW4gZXhhbXBsZVxuY29uc29sZS5sb2coJ2hvbWUuanMgbG9nZ2luZy4uLicpOyJdLCJmaWxlIjoiaG9tZS5qcyIsInNvdXJjZVJvb3QiOiIvc291cmNlLyJ9
+//# sourceMappingURL=home.js.map

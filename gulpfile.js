@@ -197,7 +197,7 @@ gulp.task('styles',function(){
 	.pipe(less({
 		plugins: [autoprefix]
 	}))
-	.pipe(config.production ? util.noop() : sourcemaps.write())
+	.pipe(config.production ? util.noop() : sourcemaps.write(''))
 	.pipe(plumber({
 		handleError: handleError
 	}))
@@ -215,7 +215,7 @@ gulp.task('scripts',function(){
 	}))
 	.pipe(config.production ? util.noop() : sourcemaps.init())
 	.pipe(include())
-	.pipe(config.production ? util.noop() : sourcemaps.write())
+	.pipe(config.production ? util.noop() : sourcemaps.write(''))
 	.pipe(plumber({
 		handleError: handleError
 	}))

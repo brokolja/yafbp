@@ -1,0 +1,1 @@
+{"version":3,"sources":["tools/reset.less","../../<input css 1>"],"names":[],"mappings":"AACA;EACC,oBAAA;CCAA","file":"core.css","sourcesContent":["// Just an example...\nbody {\n\tbackground: #fafafa;\n}","body {\n  background: #fafafa;\n}\n"]}
