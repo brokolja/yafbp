@@ -124,7 +124,7 @@ http://localhost:8080
 ### Public development ###
 
 When using --tunnel flag you can also access your project via temporary public URL.
-With this you can for example check your site with [browserstack](https://www.browserstack.com/) or send the link to your customer for live-testing.
+With this you can for example check your site with [browserstack](https://www.browserstack.com/), [LambdaTest](https://www.lambdatest.com/) or send the link to your customer for live-testing.
 
 > Hint: On every process start you get a new temporary public URL. You can see it in terminal logs.
 
